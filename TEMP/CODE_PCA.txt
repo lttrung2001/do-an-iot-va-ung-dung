@@ -1,0 +1,9 @@
+# Feature importance by PCA
+from pca import pca
+# Initialize
+model = pca(n_components=10, onehot=True)
+# Fit transform
+out = model.fit_transform(df.drop(columns=["Label"], axis=1))
+# Print the top features. The results show that f1 is best, followed by f2 etc
+print(out['topfeat'][:10])
+model.plot()
