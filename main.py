@@ -3,7 +3,7 @@
 import numpy as np
 import pandas as pd
 
-from sklearn.preprocessing import minmax_scale, StandardScaler
+from sklearn.preprocessing import minmax_scale
 from sklearn.model_selection import train_test_split
 
 from sklearn import linear_model
@@ -63,38 +63,16 @@ print(Y_valid.shape)
 # X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.25, random_state=0)
 
 # Train RBM
-num_iter = 10
-logistic = linear_model.LogisticRegression(solver="newton-cg", tol=1)
+num_iter = 20
 # n_components=X_train.shape[1]
 # batch_size=X_train.shape[0]//num_iter
 rbm = BernoulliRBM(random_state=42, verbose=1, n_components=20, batch_size=X_train.shape[0]//num_iter)
 rbm.learning_rate = 0.01
 rbm.n_iter = num_iter
-rbm.fit(X_train)
+rbm.fit(X_train, Y_train)
 X_train = rbm.transform(X_train)
 X_test = rbm.transform(X_test)
 X_valid = rbm.transform(X_valid)
-
-# def reconstruct_data(X):
-#     xx = X.copy()
-#     for _ in range(10):
-#         for n in range(xx.shape[0]):
-#             xx[n] = rbm.gibbs(xx[n])
-#     return xx
-# print('Reconstruct train')
-# X_train = reconstruct_data(X_train)
-# print('Reconstruct test')
-# X_test = reconstruct_data(X_test)
-# print('Reconstruct valid')
-# X_valid = reconstruct_data(X_valid)
-
-# indexes = train[0]
-# selected_features_index = [i for i in range(len(indexes)) if indexes[i] == True]
-# get_selected_features_name = lambda x: df.columns[x]
-# print('Feature importance by RBM:', get_selected_features_name(selected_features_index))
-
-# # Lấy những đặc trưng được chọn
-# X_train, X_test, X_valid = X_train[:, selected_features_index], X_test[:, selected_features_index], X_valid[:, selected_features_index]
 
 # Đang test
 from keras.models import Sequential
@@ -113,19 +91,19 @@ Y_test = Y_test.to_numpy().reshape(-1, 1, 1)
 Y_valid = Y_valid.to_numpy().reshape(-1, 1, 1)
 
 # Build model
-def RNN():
+def ClassifierModel():
     model = Sequential()
-    model.add(LSTM(64, input_shape=(1, data_dim)))
-    model.add(Dropout(0.2))
+    model.add(LSTM(64, input_shape=(1, data_dim, )))
+    # model.add(Dropout(0.2))
     model.add(Dense(128, activation='relu'))
-    model.add(Dropout(0.2))
-    model.add(BatchNormalization())
+    # model.add(Dropout(0.2))
+    # model.add(BatchNormalization())
     model.add(Dense(num_classes, activation='softmax'))
     return model
 
 num_epochs = 120 
 opt = Adam(learning_rate=0.001) # 0.0002
-model = RNN()
+model = ClassifierModel()
 model.summary()
 model.compile(loss='sparse_categorical_crossentropy',optimizer=opt,metrics=['accuracy'])
 es = EarlyStopping(patience=20, monitor='val_accuracy', restore_best_weights=True)
