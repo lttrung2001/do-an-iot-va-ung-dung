@@ -25,6 +25,7 @@ df_test.drop(columns=['Unnamed:0', 'Unnamed:0.1', 'FlowID', 'SourceIP', 'Destina
 df_valid.drop(columns=['Unnamed:0', 'Unnamed:0.1', 'FlowID', 'SourceIP', 'DestinationIP', 'Timestamp', 'SimillarHTTP', 'SourcePort', 'DestinationPort'], axis=1, inplace=True)
 cols = list(df.columns)
 cols.remove('Label')
+print('BENIGN size:', df[df['Label'] == 'BENIGN'].size)
 # Làm sạch dữ liệu
 import sys
 df.replace([np.inf, ], sys.float_info.max, inplace=True)
@@ -93,11 +94,10 @@ Y_valid = Y_valid.to_numpy().reshape(-1, 1, 1)
 # Build model
 def ClassifierModel():
     model = Sequential()
-    model.add(LSTM(64, input_shape=(1, data_dim, )))
+    model.add(LSTM(100, input_shape=(1, data_dim, )))
     # model.add(Dropout(0.2))
     model.add(Dense(128, activation='relu'))
     # model.add(Dropout(0.2))
-    # model.add(BatchNormalization())
     model.add(Dense(num_classes, activation='softmax'))
     return model
 
