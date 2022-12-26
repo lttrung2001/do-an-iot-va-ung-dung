@@ -65,7 +65,6 @@ print(Y_valid.shape)
 
 # Train RBM
 num_iter = 20
-# n_components=X_train.shape[1]
 # batch_size=X_train.shape[0]//num_iter
 rbm = BernoulliRBM(random_state=42, verbose=1, n_components=20, batch_size=X_train.shape[0]//num_iter)
 rbm.learning_rate = 0.01
@@ -78,7 +77,7 @@ X_valid = rbm.transform(X_valid)
 # Đang test
 from keras.models import Sequential
 from keras.optimizers import Adam
-from keras.layers import Dropout, Dense, LSTM, BatchNormalization
+from keras.layers import Dropout, Dense, LSTM
 from keras.callbacks import EarlyStopping
 
 # Reshape
@@ -102,13 +101,13 @@ def ClassifierModel():
     return model
 
 num_epochs = 120 
-opt = Adam(learning_rate=0.001) # 0.0002
+opt = Adam(learning_rate=0.001)
 model = ClassifierModel()
 model.summary()
 model.compile(loss='sparse_categorical_crossentropy',optimizer=opt,metrics=['accuracy'])
 es = EarlyStopping(patience=20, monitor='val_accuracy', restore_best_weights=True)
 # batch_size=X_train.shape[0]//num_epochs
-history = model.fit(X_train, Y_train, validation_data=(X_valid, Y_valid), epochs=num_epochs, batch_size=X_train.shape[0]//num_epochs, verbose=1, callbacks=[es], shuffle=True)
+history = model.fit(X_train, Y_train, validation_data=(X_valid, Y_valid), epochs=num_epochs, batch_size=64, verbose=1, callbacks=[es], shuffle=True)
 
 from matplotlib import pyplot as plt
 pd.DataFrame(history.history).plot(figsize=(8,5))
