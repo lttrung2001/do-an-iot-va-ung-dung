@@ -73,9 +73,9 @@ X_test = rbm.transform(X_test)
 X_valid = rbm.transform(X_valid)
 
 # Reconstruct
-X_train = tf.nn.sigmoid((tf.matmul(X_train, rbm.components_) + rbm.intercept_visible_)).numpy()
-X_test = tf.nn.sigmoid((tf.matmul(X_test, rbm.components_) + rbm.intercept_visible_)).numpy()
-X_valid = tf.nn.sigmoid((tf.matmul(X_valid, rbm.components_) + rbm.intercept_visible_)).numpy()
+# X_train = tf.nn.sigmoid((tf.matmul(X_train, rbm.components_) + rbm.intercept_visible_)).numpy()
+# X_test = tf.nn.sigmoid((tf.matmul(X_test, rbm.components_) + rbm.intercept_visible_)).numpy()
+# X_valid = tf.nn.sigmoid((tf.matmul(X_valid, rbm.components_) + rbm.intercept_visible_)).numpy()
 
 # Đang test
 from keras.models import Sequential
