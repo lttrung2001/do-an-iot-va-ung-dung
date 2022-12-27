@@ -73,14 +73,9 @@ X_test = rbm.transform(X_test)
 X_valid = rbm.transform(X_valid)
 
 # Reconstruct
-X_train = (tf.matmul(X_train, rbm.components_) + rbm.intercept_visible_).numpy()
-X_test = (tf.matmul(X_test, rbm.components_) + rbm.intercept_visible_).numpy()
-X_valid = (tf.matmul(X_valid, rbm.components_) + rbm.intercept_visible_).numpy()
-# Scale (0,1) again
-X_train = scaler.fit_transform(X_train)
-X_test = scaler.transform(X_test)
-X_valid = scaler.transform(X_valid)
-
+X_train = tf.nn.sigmoid((tf.matmul(X_train, rbm.components_) + rbm.intercept_visible_)).numpy()
+X_test = tf.nn.sigmoid((tf.matmul(X_test, rbm.components_) + rbm.intercept_visible_)).numpy()
+X_valid = tf.nn.sigmoid((tf.matmul(X_valid, rbm.components_) + rbm.intercept_visible_)).numpy()
 
 # Đang test
 from keras.models import Sequential
@@ -109,7 +104,7 @@ def ClassifierModel():
     return model
 
 num_epochs = 120 
-opt = Adam(learning_rate=0.0001)
+opt = Adam(learning_rate=0.01)
 model = ClassifierModel()
 model.summary()
 model.compile(loss='sparse_categorical_crossentropy',optimizer=opt,metrics=['accuracy'])
