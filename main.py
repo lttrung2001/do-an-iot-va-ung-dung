@@ -109,7 +109,7 @@ def ClassifierModel():
     return model
 
 num_epochs = 120 
-opt = Adam(learning_rate=0.001)
+opt = Adam(learning_rate=0.0001)
 model = ClassifierModel()
 model.summary()
 model.compile(loss='sparse_categorical_crossentropy',optimizer=opt,metrics=['accuracy'])
@@ -118,7 +118,21 @@ es = EarlyStopping(patience=20, monitor='val_accuracy', restore_best_weights=Tru
 history = model.fit(X_train, Y_train, validation_data=(X_valid, Y_valid), epochs=num_epochs, batch_size=X_train.shape[0]//num_epochs, verbose=1, callbacks=[es], shuffle=True)
 
 from matplotlib import pyplot as plt
-pd.DataFrame(history.history).plot(figsize=(8,5))
+
+plt.plot(history.history['accuracy'])
+plt.plot(history.history['val_accuracy'])
+plt.title('model accuracy')
+plt.ylabel('accuracy')
+plt.xlabel('epoch')
+plt.legend(['train', 'val'], loc='upper left')
+plt.show()
+
+plt.plot(history.history['loss'])
+plt.plot(history.history['val_loss'])
+plt.title('model loss')
+plt.ylabel('loss')
+plt.xlabel('epoch')
+plt.legend(['train', 'val'], loc='upper left')
 plt.show()
 
 train_evaluation = model.evaluate(X_train, Y_train, return_dict=True)
