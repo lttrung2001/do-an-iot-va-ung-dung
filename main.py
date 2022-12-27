@@ -2,8 +2,9 @@
 
 import numpy as np
 import pandas as pd
+import tensorflow as tf
 
-from sklearn.preprocessing import minmax_scale
+from sklearn.preprocessing import MinMaxScaler
 from sklearn.model_selection import train_test_split
 
 from sklearn import linear_model
@@ -50,9 +51,10 @@ Y_test = labels_test.BENIGN
 Y_valid = labels_valid.BENIGN
 
 # Chuẩn hóa dữ liệu
-X_train = minmax_scale(X_train, feature_range=(0, 1))  # 0-1 scaling
-X_test = minmax_scale(X_test, feature_range=(0, 1))  # 0-1 scaling
-X_valid = minmax_scale(X_valid, feature_range=(0, 1))  # 0-1 scaling
+scaler = MinMaxScaler()
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
+X_valid = scaler.transform(X_valid)
 
 # In shape của bộ train, test
 print(X_train.shape)
@@ -64,15 +66,25 @@ print(Y_valid.shape)
 # X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.25, random_state=0)
 
 # Train RBM
-num_iter = 20
+num_iter = 10
 # batch_size=X_train.shape[0]//num_iter
-rbm = BernoulliRBM(random_state=42, verbose=1, n_components=20, batch_size=X_train.shape[0]//num_iter)
+rbm = BernoulliRBM(random_state=42, verbose=1, n_components=10, batch_size=X_train.shape[0]//num_iter)
 rbm.learning_rate = 0.01
 rbm.n_iter = num_iter
 rbm.fit(X_train, Y_train)
 X_train = rbm.transform(X_train)
 X_test = rbm.transform(X_test)
 X_valid = rbm.transform(X_valid)
+
+# Reconstruct
+X_train = (tf.matmul(X_train, rbm.components_) + rbm.intercept_visible_).numpy()
+X_test = (tf.matmul(X_test, rbm.components_) + rbm.intercept_visible_).numpy()
+X_valid = (tf.matmul(X_valid, rbm.components_) + rbm.intercept_visible_).numpy()
+# Scale (0,1) again
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
+X_valid = scaler.transform(X_valid)
+
 
 # Đang test
 from keras.models import Sequential
@@ -107,7 +119,7 @@ model.summary()
 model.compile(loss='sparse_categorical_crossentropy',optimizer=opt,metrics=['accuracy'])
 es = EarlyStopping(patience=20, monitor='val_accuracy', restore_best_weights=True)
 # batch_size=X_train.shape[0]//num_epochs
-history = model.fit(X_train, Y_train, validation_data=(X_valid, Y_valid), epochs=num_epochs, batch_size=64, verbose=1, callbacks=[es], shuffle=True)
+history = model.fit(X_train, Y_train, validation_data=(X_valid, Y_valid), epochs=num_epochs, batch_size=X_train.shape[0]//num_epochs, verbose=1, callbacks=[es], shuffle=True)
 
 from matplotlib import pyplot as plt
 pd.DataFrame(history.history).plot(figsize=(8,5))
