@@ -64,7 +64,7 @@ print(Y_valid.shape)
 # Train RBM
 num_iter = 10
 # batch_size=X_train.shape[0]//num_iter
-rbm = BernoulliRBM(random_state=42, verbose=1, n_components=10, batch_size=X_train.shape[0]//num_iter)
+rbm = BernoulliRBM(random_state=42, verbose=1, n_components=20, batch_size=1000)
 rbm.learning_rate = 0.01
 rbm.n_iter = num_iter
 rbm.fit(X_train, Y_train)
