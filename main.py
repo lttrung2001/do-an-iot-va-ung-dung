@@ -64,7 +64,7 @@ print(Y_valid.shape)
 # Train RBM
 num_iter = 10
 # batch_size=X_train.shape[0]//num_iter
-rbm = BernoulliRBM(random_state=42, verbose=1, n_components=20, batch_size=1000)
+rbm = BernoulliRBM(random_state=42, verbose=1, n_components=32, batch_size=1000)
 rbm.learning_rate = 0.01
 rbm.n_iter = num_iter
 rbm.fit(X_train, Y_train)
@@ -98,7 +98,7 @@ def ClassifierModel():
     model = Sequential()
     model.add(LSTM(100, input_shape=(1, data_dim, )))
     # model.add(Dropout(0.2))
-    model.add(Dense(128, activation='relu'))
+    model.add(Dense(64, activation='relu'))
     # model.add(Dropout(0.2))
     model.add(Dense(num_classes, activation='softmax'))
     return model
