@@ -5,11 +5,7 @@ import pandas as pd
 import tensorflow as tf
 
 from sklearn.preprocessing import MinMaxScaler
-from sklearn.model_selection import train_test_split
-
-from sklearn import linear_model
 from sklearn.neural_network import BernoulliRBM
-from sklearn.pipeline import Pipeline
 
 # Đọc train, test
 df = pd.read_csv('train.csv')
