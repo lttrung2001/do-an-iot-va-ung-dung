@@ -108,9 +108,9 @@ opt = Adam(learning_rate=0.01)
 model = ClassifierModel()
 model.summary()
 model.compile(loss='sparse_categorical_crossentropy',optimizer=opt,metrics=['accuracy'])
-es = EarlyStopping(patience=20, monitor='val_accuracy', restore_best_weights=True)
+es = EarlyStopping(patience=20, monitor='val_loss', mode='min', restore_best_weights=True)
 # batch_size=X_train.shape[0]//num_epochs
-history = model.fit(X_train, Y_train, validation_data=(X_valid, Y_valid), epochs=num_epochs, batch_size=1000, verbose=1, callbacks=[es], shuffle=True)
+history = model.fit(X_train, Y_train, validation_data=(X_valid, Y_valid), epochs=num_epochs, batch_size=500, verbose=1, callbacks=[es], shuffle=True)
 
 from matplotlib import pyplot as plt
 
